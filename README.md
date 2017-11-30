@@ -38,7 +38,7 @@ var ReturnList = new List<MyObject>();
 DynamicDBRequest req = new DynamicDBRequest();
 req.AddDBParameter("@Param1", "SomeValue");
 req.AddDBParameter("@Param2", 4);
-WebServiceResult result = ReturnList.SQLExecuteQuery(req, "NameOfSomeStoredProc");
+WebServiceResult result = req.SQLExecuteQuery(ReturnList, "NameOfSomeStoredProc");
 ```
 
 ## Getting Started
@@ -117,6 +117,7 @@ The SpecialPropertyMapper is an optional parameter on SQL calls that allow you t
 
 Example
 ```
+List<MyObject> ReturnList = new List< MyObject >();
 DynamicDBRequest req = new DynamicDBRequest();
 req.AddDBParameter("@Param1", "someinfo");
 
@@ -124,9 +125,9 @@ SpecialPropertyMapper functionMap = new SpecialPropertyMapper();
 
 functionMap.AddFunction("Property1", CSVToStringHash);
 
-WebServiceResult result = s.SQLExecuteQuery(req, " nameOfSomeStoredProc", functionmap);
+WebServiceResult result = req.SQLExecuteQuery(ReturnList, " nameOfSomeStoredProc", functionmap);
 
-//Function used in the SpecialPropertyMap
+//Function used in the SpecialPropertyMap, note this is re-usable
 static object CSVToStringHash(object x)
 {
     HashSet<string> hash = new HashSet<string>();
@@ -142,7 +143,7 @@ static object CSVToStringHash(object x)
 
 ### SQLExecuteNonQuery
 
-This is an extension method on both Object and DynamicDBRequest.  It will try to call the stored procedure passed in and map the input parameters from the extended class.  The object extension version can serialize your object to XML and use that as the input parameter if there is only one input parameter and it is of type SqlDBType.XML
+This is an extension method on DynamicDBRequest.  It will try to call the stored procedure passed in and map the input parameters from the extended class.
 
 Example
 ```
@@ -171,7 +172,7 @@ DynamicDBRequest req = new DynamicDBRequest();
 
 req.AddDBParameter("@SomeParam", "SomeValue");
 
-WebServiceResult result = s.SQLExecuteQuery(req, " nameOfSomeStoredProc");
+WebServiceResult result = req.SQLExecuteQuery(s, " nameOfSomeStoredProc");
 
 //Get output parameters from dynamic Outputs property in WebServiceResult
 bool shouldValidate = result.Outputs.MyOutputParam;
